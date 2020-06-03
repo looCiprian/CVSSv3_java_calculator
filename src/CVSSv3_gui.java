@@ -4,43 +4,33 @@ import javax.swing.JFrame;
 
 import cvss_utils.*;
 import cvss_utils.CvssV3.*;
-import cvss_utils.Cvss.*;
 
 import javax.swing.JButton;
-import java.awt.BorderLayout;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
-import java.util.regex.Matcher;
 import java.awt.event.ActionEvent;
-import java.awt.GridBagLayout;
 import java.awt.datatransfer.Clipboard;
-import java.awt.datatransfer.StringSelection;
-
-import com.jgoodies.forms.layout.FormLayout;
-import com.jgoodies.forms.layout.ColumnSpec;
-import com.jgoodies.forms.layout.RowSpec;
 import java.awt.datatransfer.StringSelection;
 import java.awt.Toolkit;
-import java.awt.datatransfer.Clipboard;
 
-import javax.swing.BoxLayout;
 import javax.swing.ButtonGroup;
 import javax.swing.JTextField;
 import javax.swing.JLabel;
 import javax.swing.JRadioButton;
 import java.awt.Color;
-import javax.swing.JPanel;
-import java.awt.GridBagConstraints;
-import java.awt.Insets;
 
-
+/**
+ * 
+ * @author Lorenzo Grazian
+ *
+ */
 public class CVSSv3_gui {
 
 	
 	
 	private JFrame frame;
-	private JTextField vectorText;
+	private static JTextField vectorText;
     private JRadioButton AV_network;
     private JRadioButton AV_adjacent;
     private JRadioButton AV_local;
@@ -64,18 +54,18 @@ public class CVSSv3_gui {
     private JRadioButton A_high;
     private JRadioButton PR_high;
     static ButtonGroup AttackVectorG;
-    ButtonGroup AttackComplexityG;
-    ButtonGroup PrivilegeRequiredG;
-    ButtonGroup UserInteractionG;
-    ButtonGroup ScopeG;
-    ButtonGroup ConfidentialityImpactG;
-    ButtonGroup IntegrityImpactG;
-    ButtonGroup AvailabilityImpactG;
-    private JLabel scoreL;
-    private JTextField scoreT;
+    static ButtonGroup AttackComplexityG;
+    static ButtonGroup PrivilegeRequiredG;
+    static ButtonGroup UserInteractionG;
+    static ButtonGroup ScopeG;
+    static ButtonGroup ConfidentialityImpactG;
+    static ButtonGroup IntegrityImpactG;
+    static ButtonGroup AvailabilityImpactG;
+    private static JLabel scoreL;
+    private static JTextField scoreT;
     private static JButton calculate_vector;
-    private JButton calculate_radio;
-    private JTextField urlT;
+    private static JButton calculate_radio;
+    private static JTextField urlT;
     private JLabel lblNewLabel_2;
     private JButton cpyToClipVector;
     private JButton cpyLinkToClipVector;
@@ -91,16 +81,13 @@ public class CVSSv3_gui {
 					CVSSv3_gui window = new CVSSv3_gui();
 					window.frame.setVisible(true);
 					
-				
-					
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
-				
-				
 			}
 		});
 		
+
 	}
 
 	
@@ -157,113 +144,15 @@ public class CVSSv3_gui {
 		calculate_vector.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				
-				calculateVector();
+				calculateFromVector();
 				
 			}
 		});
 		
-		
 		calculate_radio.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				CvssV3_1 cvssV3 = new CvssV3_1();
-
-				switch (AttackVectorG.getSelection().getActionCommand()) {
-				case "AV_network":
-					cvssV3.attackVector(AttackVector.NETWORK);
-				break;
-				case "AV_adjacent":
-					cvssV3.attackVector(AttackVector.ADJACENT);
-				break;
-				case "AV_local":
-					cvssV3.attackVector(AttackVector.LOCAL);
-				break;
-				case "AV_physical":
-					cvssV3.attackVector(AttackVector.PHYSICAL);
-				break;
-				}
 				
-				switch (AttackComplexityG.getSelection().getActionCommand()) {
-				case "AC_low":
-					cvssV3.attackComplexity(AttackComplexity.LOW);
-				break;
-				case "AC_high":
-					cvssV3.attackComplexity(AttackComplexity.HIGH);
-				break;
-				}
-				
-				switch (PrivilegeRequiredG.getSelection().getActionCommand()) {
-				case "PR_none":
-					cvssV3.privilegesRequired(PrivilegesRequired.NONE);
-				break;
-				case "PR_low":
-					cvssV3.privilegesRequired(PrivilegesRequired.LOW);
-				break;
-				case "PR_high":
-					cvssV3.privilegesRequired(PrivilegesRequired.HIGH);
-				break;
-				}
-				
-				switch (UserInteractionG.getSelection().getActionCommand()) {
-				case "UI_none":
-					cvssV3.userInteraction(UserInteraction.NONE);
-				break;
-				case "UI_required":
-					cvssV3.userInteraction(UserInteraction.REQUIRED);
-				break;			
-				}
-				
-				switch (ScopeG.getSelection().getActionCommand()) {
-				case "S_unchanged":
-					cvssV3.scope(Scope.UNCHANGED);
-				break;
-				case "S_changed":
-					cvssV3.scope(Scope.CHANGED);
-				break;			
-				}
-				
-				switch (ConfidentialityImpactG.getSelection().getActionCommand()) {
-				case "C_none":
-					cvssV3.confidentiality(CIA.NONE);
-				break;
-				case "C_low":
-					cvssV3.confidentiality(CIA.LOW);
-				break;
-				case "C_high":
-					cvssV3.confidentiality(CIA.HIGH);
-				break;
-				}
-				
-				switch (IntegrityImpactG.getSelection().getActionCommand()) {
-				case "I_none":
-					cvssV3.integrity(CIA.NONE);
-				break;
-				case "I_low":
-					cvssV3.integrity(CIA.LOW);
-				break;
-				case "I_high":
-					cvssV3.integrity(CIA.HIGH);
-				break;
-				}
-				
-				switch (AvailabilityImpactG.getSelection().getActionCommand()) {
-				case "A_none":
-					cvssV3.availability(CIA.NONE);
-				break;
-				case "A_low":
-					cvssV3.availability(CIA.LOW);
-				break;
-				case "A_high":
-					cvssV3.availability(CIA.HIGH);
-				break;
-				}
-				
-				
-				
-				scoreT.setText(String.valueOf(cvssV3.calculateScore().getBaseScore()));
-				setColor(cvssV3.calculateScore().getBaseScore());
-				vectorText.setText(cvssV3.getVector());
-				urlT.setText("https://nvd.nist.gov/vuln-metrics/cvss/v3-calculator?vector=" + cvssV3.getVector() + "&version=3.1");
-				
+				calculateFromRadio();
 			}
 		});
 		
@@ -294,7 +183,7 @@ public class CVSSv3_gui {
 	      	{
 	      		if(key.getKeyChar() == KeyEvent.VK_ENTER)
 
-	      			calculateVector();
+	      			calculateFromVector();
 	      	}
 
 	});
@@ -302,8 +191,11 @@ public class CVSSv3_gui {
 		
 	}
 	
-	
-	private void calculateVector() {
+
+	/**
+	 * calculate and print score from vector
+	 */
+	private void calculateFromVector() {
 		String vector = vectorText.getText();
 		
 		Cvss cvss = Cvss.fromVector(vector);
@@ -418,8 +310,116 @@ public class CVSSv3_gui {
 		}
 	}
 	
+	/**
+	 * Calculate and print score and vector from radio button
+	 */
+	private static void calculateFromRadio() {
+		CvssV3_1 cvssV3 = new CvssV3_1();
+
+		switch (AttackVectorG.getSelection().getActionCommand()) {
+		case "AV_network":
+			cvssV3.attackVector(AttackVector.NETWORK);
+		break;
+		case "AV_adjacent":
+			cvssV3.attackVector(AttackVector.ADJACENT);
+		break;
+		case "AV_local":
+			cvssV3.attackVector(AttackVector.LOCAL);
+		break;
+		case "AV_physical":
+			cvssV3.attackVector(AttackVector.PHYSICAL);
+		break;
+		}
+		
+		switch (AttackComplexityG.getSelection().getActionCommand()) {
+		case "AC_low":
+			cvssV3.attackComplexity(AttackComplexity.LOW);
+		break;
+		case "AC_high":
+			cvssV3.attackComplexity(AttackComplexity.HIGH);
+		break;
+		}
+		
+		switch (PrivilegeRequiredG.getSelection().getActionCommand()) {
+		case "PR_none":
+			cvssV3.privilegesRequired(PrivilegesRequired.NONE);
+		break;
+		case "PR_low":
+			cvssV3.privilegesRequired(PrivilegesRequired.LOW);
+		break;
+		case "PR_high":
+			cvssV3.privilegesRequired(PrivilegesRequired.HIGH);
+		break;
+		}
+		
+		switch (UserInteractionG.getSelection().getActionCommand()) {
+		case "UI_none":
+			cvssV3.userInteraction(UserInteraction.NONE);
+		break;
+		case "UI_required":
+			cvssV3.userInteraction(UserInteraction.REQUIRED);
+		break;			
+		}
+		
+		switch (ScopeG.getSelection().getActionCommand()) {
+		case "S_unchanged":
+			cvssV3.scope(Scope.UNCHANGED);
+		break;
+		case "S_changed":
+			cvssV3.scope(Scope.CHANGED);
+		break;			
+		}
+		
+		switch (ConfidentialityImpactG.getSelection().getActionCommand()) {
+		case "C_none":
+			cvssV3.confidentiality(CIA.NONE);
+		break;
+		case "C_low":
+			cvssV3.confidentiality(CIA.LOW);
+		break;
+		case "C_high":
+			cvssV3.confidentiality(CIA.HIGH);
+		break;
+		}
+		
+		switch (IntegrityImpactG.getSelection().getActionCommand()) {
+		case "I_none":
+			cvssV3.integrity(CIA.NONE);
+		break;
+		case "I_low":
+			cvssV3.integrity(CIA.LOW);
+		break;
+		case "I_high":
+			cvssV3.integrity(CIA.HIGH);
+		break;
+		}
+		
+		switch (AvailabilityImpactG.getSelection().getActionCommand()) {
+		case "A_none":
+			cvssV3.availability(CIA.NONE);
+		break;
+		case "A_low":
+			cvssV3.availability(CIA.LOW);
+		break;
+		case "A_high":
+			cvssV3.availability(CIA.HIGH);
+		break;
+		}
+		
+		
+		
+		scoreT.setText(String.valueOf(cvssV3.calculateScore().getBaseScore()));
+		setColor(cvssV3.calculateScore().getBaseScore());
+		vectorText.setText(cvssV3.getVector());
+		urlT.setText("https://nvd.nist.gov/vuln-metrics/cvss/v3-calculator?vector=" + cvssV3.getVector() + "&version=3.1");
+	}
 	
-	private void setColor(double score) {
+	
+	/**
+	 * Set color of @scoreL label based on score 
+	 * @param score
+	 */
+	private static void setColor(double score) {
 		
 		if (score >= 0.1 && score < 4.0) {
 			scoreL.setForeground(Color.GREEN);
@@ -436,6 +436,9 @@ public class CVSSv3_gui {
 	}
 	
 	
+	/**
+	 * Set default radio status
+	 */
 	private void setDefaultRadio() {
 		
 		AV_network.setSelected(true);
@@ -447,11 +450,9 @@ public class CVSSv3_gui {
 		I_none.setSelected(true);
 		A_none.setSelected(true);
 		
-	
 	}
 	
 	
-
 	/**
 	 * Initialize the contents of the frame.
 	 */
