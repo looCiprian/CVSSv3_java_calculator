@@ -7,6 +7,8 @@ import cvss_utils.CvssV3.*;
 
 import javax.swing.JButton;
 import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.ActionEvent;
@@ -16,16 +18,22 @@ import java.awt.Toolkit;
 
 import javax.swing.ButtonGroup;
 import javax.swing.JTextField;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import javax.swing.JLabel;
 import javax.swing.JRadioButton;
 import java.awt.Color;
+import java.awt.Event;
+
 
 /**
  * 
  * @author Lorenzo Grazian
  *
  */
-public class CVSSv3_gui {
+public class CVSSv3_gui implements ActionListener {
 
 	
 	
@@ -69,6 +77,8 @@ public class CVSSv3_gui {
     private JLabel lblNewLabel_2;
     private JButton cpyToClipVector;
     private JButton cpyLinkToClipVector;
+    ActionListener actionListener;
+    ChangeListener changeListener;
 
 
 	/**
@@ -186,11 +196,34 @@ public class CVSSv3_gui {
 	      			calculateFromVector();
 	      	}
 
-	});
+		});
+		
+		
+				   
+	   vectorText.getDocument().addDocumentListener((DocumentListener) new DocumentListener() {
+		   public void changedUpdate(DocumentEvent e) {
+		     warn();
+		   }
+		   public void removeUpdate(DocumentEvent e) {
+		     warn();
+		   }
+		   public void insertUpdate(DocumentEvent e) {
+		     warn();
+		   }
+	
+		   public void warn() {
+			   calculateFromVector();
+		   }
+		 });
 		
 		
 	}
 	
+
+    public void actionPerformed(ActionEvent e) {
+    	calculateFromRadio();
+
+    }
 
 	/**
 	 * calculate and print score from vector
@@ -452,6 +485,7 @@ public class CVSSv3_gui {
 		
 	}
 	
+
 	
 	/**
 	 * Initialize the contents of the frame.
@@ -479,7 +513,7 @@ public class CVSSv3_gui {
 		frame.getContentPane().add(cpyToClipVector);
 		
 		scoreL = new JLabel("Score:");
-		scoreL.setBounds(9, 39, 38, 16);
+		scoreL.setBounds(9, 39, 48, 16);
 		scoreL.setForeground(Color.BLACK);
 		frame.getContentPane().add(scoreL);
 		
@@ -489,7 +523,7 @@ public class CVSSv3_gui {
 		scoreT.setColumns(10);
 		
 		lblNewLabel_2 = new JLabel("Url:");
-		lblNewLabel_2.setBounds(191, 39, 22, 16);
+		lblNewLabel_2.setBounds(178, 39, 45, 16);
 		frame.getContentPane().add(lblNewLabel_2);
 		
 		urlT = new JTextField();
@@ -502,149 +536,172 @@ public class CVSSv3_gui {
 		frame.getContentPane().add(cpyLinkToClipVector);
 		
 		JLabel lblNewLabel = new JLabel("Attack Vector (AV)");
-		lblNewLabel.setBounds(11, 95, 114, 16);
+		lblNewLabel.setBounds(32, 95, 212, 16);
 		frame.getContentPane().add(lblNewLabel);
 		
 		AV_network = new JRadioButton("Network");
-		AV_network.setBounds(0, 116, 85, 23);
+		AV_network.setBounds(21, 116, 85, 23);
 		AV_network.setActionCommand("AV_network");
 		frame.getContentPane().add(AV_network);
+		AV_network.addActionListener(this);
+		
 		
 		AV_adjacent = new JRadioButton("Adjacent Network");
-		AV_adjacent.setBounds(92, 116, 144, 23);
+		AV_adjacent.setBounds(113, 116, 144, 23);
 		AV_adjacent.setActionCommand("AV_adjacent");
 		frame.getContentPane().add(AV_adjacent);
+		AV_adjacent.addActionListener(this);
 		
 		AV_local = new JRadioButton("Local");
-		AV_local.setBounds(241, 116, 65, 23);
+		AV_local.setBounds(262, 116, 65, 23);
 		AV_local.setActionCommand("AV_local");
 		frame.getContentPane().add(AV_local);
+		AV_local.addActionListener(this);
 		
 		AV_physical = new JRadioButton("Physical");
-		AV_physical.setBounds(311, 116, 83, 23);
+		AV_physical.setBounds(332, 116, 83, 23);
 		AV_physical.setActionCommand("AV_physical");
 		frame.getContentPane().add(AV_physical);
+		AV_physical.addActionListener(this);
 		
 		JLabel lblNewLabel_1 = new JLabel("Attack Complexity (AC)");
-		lblNewLabel_1.setBounds(10, 144, 149, 16);
+		lblNewLabel_1.setBounds(30, 151, 213, 16);
 		frame.getContentPane().add(lblNewLabel_1);
 		
 		JLabel lblNewLabel_1_2 = new JLabel("Scope (S)");
-		lblNewLabel_1_2.setBounds(311, 144, 56, 16);
+		lblNewLabel_1_2.setBounds(504, 95, 83, 16);
 		frame.getContentPane().add(lblNewLabel_1_2);
 		
 		AC_low = new JRadioButton("Low");
-		AC_low.setBounds(0, 165, 57, 23);
+		AC_low.setBounds(21, 172, 57, 23);
 		AC_low.setActionCommand("AC_low");
 		frame.getContentPane().add(AC_low);
+		AC_low.addActionListener(this);
 		
 		AC_high = new JRadioButton("High");
-		AC_high.setBounds(92, 165, 144, 23);
+		AC_high.setBounds(113, 172, 144, 23);
 		AC_high.setActionCommand("AC_high");
 		frame.getContentPane().add(AC_high);
+		AC_high.addActionListener(this);
 		
 		S_unchanged = new JRadioButton("Unchangeg");
-		S_unchanged.setBounds(311, 165, 138, 23);
+		S_unchanged.setBounds(504, 116, 138, 23);
 		S_unchanged.setActionCommand("S_unchanged");
 		frame.getContentPane().add(S_unchanged);
+		S_unchanged.addActionListener(this);
 		
 		S_changed = new JRadioButton("Changed");
-		S_changed.setBounds(481, 165, 105, 23);
+		S_changed.setBounds(642, 116, 105, 23);
 		S_changed.setActionCommand("S_changed");
 		frame.getContentPane().add(S_changed);
+		S_changed.addActionListener(this);
 		
 		JLabel lblNewLabel_1_1 = new JLabel("Privileges Required (PR)");
-		lblNewLabel_1_1.setBounds(10, 197, 149, 16);
+		lblNewLabel_1_1.setBounds(30, 207, 213, 16);
 		frame.getContentPane().add(lblNewLabel_1_1);
 		
 		JLabel lblNewLabel_1_2_1 = new JLabel("Confidentiality Impact (C)");
-		lblNewLabel_1_2_1.setBounds(311, 197, 161, 16);
+		lblNewLabel_1_2_1.setBounds(504, 148, 200, 16);
 		frame.getContentPane().add(lblNewLabel_1_2_1);
 		
 		PR_none = new JRadioButton("None");
-		PR_none.setBounds(0, 218, 65, 23);
+		PR_none.setBounds(21, 225, 65, 23);
 		PR_none.setActionCommand("PR_none");
 		frame.getContentPane().add(PR_none);
+		PR_none.addActionListener(this);
 		
 		PR_low = new JRadioButton("Low");
-		PR_low.setBounds(92, 218, 57, 23);
+		PR_low.setBounds(113, 225, 57, 23);
 		PR_low.setActionCommand("PR_low");
 		frame.getContentPane().add(PR_low);
+		PR_low.addActionListener(this);
 		
 		PR_high = new JRadioButton("High");
-		PR_high.setBounds(154, 218, 62, 23);
+		PR_high.setBounds(182, 225, 62, 23);
 		PR_high.setActionCommand("PR_high");
 		frame.getContentPane().add(PR_high);
+		PR_high.addActionListener(this);
 		
 		C_none = new JRadioButton("None");
-		C_none.setBounds(311, 218, 65, 23);
+		C_none.setBounds(504, 169, 65, 23);
 		C_none.setActionCommand("C_none");
 		frame.getContentPane().add(C_none);
+		C_none.addActionListener(this);
 		
 		C_low = new JRadioButton("Low");
-		C_low.setBounds(388, 218, 57, 23);
+		C_low.setBounds(581, 169, 57, 23);
 		C_low.setActionCommand("C_low");
 		frame.getContentPane().add(C_low);
+		C_low.addActionListener(this);
 		
 		C_high = new JRadioButton("High");
-		C_high.setBounds(449, 218, 62, 23);
+		C_high.setBounds(642, 169, 62, 23);
 		C_high.setActionCommand("C_high");
 		frame.getContentPane().add(C_high);
+		C_high.addActionListener(this);
 		
 		JLabel lblNewLabel_1_1_1 = new JLabel("User Interaction (UI)");
-		lblNewLabel_1_1_1.setBounds(9, 250, 125, 16);
+		lblNewLabel_1_1_1.setBounds(21, 260, 214, 16);
 		frame.getContentPane().add(lblNewLabel_1_1_1);
 		
 		JLabel lblNewLabel_1_2_1_1 = new JLabel("Integrity Impact (I)");
-		lblNewLabel_1_2_1_1.setBounds(311, 250, 235, 16);
+		lblNewLabel_1_2_1_1.setBounds(504, 201, 235, 16);
 		frame.getContentPane().add(lblNewLabel_1_2_1_1);
 		
 		UI_none = new JRadioButton("None");
-		UI_none.setBounds(0, 271, 65, 23);
+		UI_none.setBounds(21, 278, 65, 23);
 		UI_none.setActionCommand("UI_none");
 		frame.getContentPane().add(UI_none);
+		UI_none.addActionListener(this);
 		
 		UI_required = new JRadioButton("Required");
-		UI_required.setBounds(92, 271, 214, 23);
+		UI_required.setBounds(113, 278, 214, 23);
 		UI_required.setActionCommand("UI_required");
 		frame.getContentPane().add(UI_required);
+		UI_required.addActionListener(this);
 		
 		I_none = new JRadioButton("None");
-		I_none.setBounds(311, 271, 65, 23);
+		I_none.setBounds(504, 222, 65, 23);
 		I_none.setActionCommand("I_none");
 		frame.getContentPane().add(I_none);
+		I_none.addActionListener(this);
 		
 		I_low = new JRadioButton("Low");
-		I_low.setBounds(387, 271, 57, 23);
+		I_low.setBounds(580, 222, 57, 23);
 		I_low.setActionCommand("I_low");
 		frame.getContentPane().add(I_low);
+		I_low.addActionListener(this);
 		
 		I_high = new JRadioButton("High");
-		I_high.setBounds(449, 271, 62, 23);
+		I_high.setBounds(642, 222, 62, 23);
 		I_high.setActionCommand("I_high");
 		frame.getContentPane().add(I_high);
+		I_high.addActionListener(this);
 		
 		JLabel lblNewLabel_1_2_1_1_1 = new JLabel("Availability Impact (A)");
-		lblNewLabel_1_2_1_1_1.setBounds(311, 300, 235, 16);
+		lblNewLabel_1_2_1_1_1.setBounds(504, 251, 235, 16);
 		frame.getContentPane().add(lblNewLabel_1_2_1_1_1);
 		
 		A_none = new JRadioButton("None");
-		A_none.setBounds(311, 320, 65, 23);
+		A_none.setBounds(504, 271, 65, 23);
 		A_none.setActionCommand("A_none");
 		frame.getContentPane().add(A_none);
+		A_none.addActionListener(this);
 		
 		A_low = new JRadioButton("Low");
-		A_low.setBounds(388, 320, 57, 23);
+		A_low.setBounds(581, 271, 57, 23);
 		A_low.setActionCommand("A_low");
 		frame.getContentPane().add(A_low);
+		A_low.addActionListener(this);
 		
 		A_high = new JRadioButton("High");
-		A_high.setBounds(449, 320, 62, 23);
+		A_high.setBounds(642, 271, 62, 23);
 		A_high.setActionCommand("A_high");
 		frame.getContentPane().add(A_high);
+		A_high.addActionListener(this);
 		
 		calculate_radio = new JButton("Calculate vector & score");
-		calculate_radio.setBounds(0, 348, 619, 29);
+		calculate_radio.setBounds(110, 355, 619, 29);
 		frame.getContentPane().add(calculate_radio);
 	}
 }
